@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA X1 — Precision Without Compromise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050506;--fg:#f4f4f6;--mute:#8b8b95;--line:rgba(255,255,255,.08);--glow:120,140,255;--ease:cubic-bezier(.16,1,.3,1)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:Inter,Arial,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::-webkit-scrollbar{width:4px}body::-webkit-scrollbar-thumb{background:#333;border-radius:9px}
+::selection{background:#fff;color:#000}
+
+/* atmosphere */
+.grain{position:fixed;inset:0;z-index:900;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.aura{position:fixed;inset:0;z-index:1;pointer-events:none;
+background:radial-gradient(700px 500px at var(--ax,70%) var(--ay,40%),rgba(var(--glow),.16),transparent 70%);transition:background .6s}
+.cursor{position:fixed;width:420px;height:420px;left:0;top:0;z-index:2;pointer-events:none;border-radius:50%;
+background:radial-gradient(circle,rgba(255,255,255,.05),transparent 65%);transform:translate(-50%,-50%);will-change:transform}
+
+/* nav */
+.navbar{position:fixed;top:0;left:0;width:100%;height:72px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;
+background:rgba(5,5,6,.55);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);border-bottom:1px solid var(--line)}
+.logo{font:700 15px 'Space Grotesk',sans-serif;letter-spacing:6px}
+.nav-right{display:flex;align-items:center;gap:26px}
+.nav-link{color:var(--mute);text-decoration:none;font-size:11px;letter-spacing:2px;transition:.3s}
+.nav-link:hover{color:#fff}
+.cart-pill{font-size:11px;letter-spacing:1px;padding:9px 16px;border:1px solid var(--line);border-radius:99px;color:#fff;background:rgba(255,255,255,.04);transition:.3s}
+.cart-pill.bump{transform:scale(1.12);border-color:#fff}
+.progress{position:fixed;top:72px;left:0;width:100%;height:2px;z-index:999}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,transparent,#fff)}
+
+/* dots nav */
+.dots{position:fixed;right:2.2vw;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;gap:14px}
+.dots a{width:6px;height:6px;border-radius:50%;background:#444;transition:.4s var(--ease)}
+.dots a{position:relative}.dots a::after{content:"";position:absolute;inset:-8px -10px}
+.dots a.on{background:#fff;height:22px;border-radius:9px}
+
+/* product */
+.product-stage{position:fixed;inset:0;z-index:20;pointer-events:none;perspective:1400px;overflow:hidden}
+.product-wrapper{position:absolute;left:50%;top:50%;width:min(500px,44vw);transform-style:preserve-3d;will-change:transform}
+.product-image{display:block;width:100%;height:auto;object-fit:contain;transition:filter .8s var(--ease);
+filter:drop-shadow(0 50px 80px rgba(0,0,0,.65)) drop-shadow(0 0 60px rgba(var(--glow),.12));user-select:none;-webkit-user-drag:none}
+.product-image{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{position:absolute;inset:0;transform:rotateY(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:15%/7%;
+background:linear-gradient(145deg,#33333c,#111116 55%,#2a2a32);box-shadow:inset 0 0 0 2px rgba(255,255,255,.12),0 50px 80px rgba(0,0,0,.6)}
+.back i{position:absolute;top:4.5%;right:8%;width:36%;aspect-ratio:1;border-radius:26%;background:radial-gradient(circle at 30% 30%,#2b2b33 0 22%,#050507 24% 30%,transparent 32%),radial-gradient(circle at 70% 30%,#2b2b33 0 22%,#050507 24% 30%,transparent 32%),radial-gradient(circle at 30% 70%,#2b2b33 0 22%,#050507 24% 30%,transparent 32%),#0d0d11;box-shadow:inset 0 0 0 2px rgba(255,255,255,.1)}
+.back b{position:absolute;left:0;right:0;top:50%;text-align:center;font:700 clamp(12px,1.6vw,20px) 'Space Grotesk',sans-serif;letter-spacing:.5em;color:rgba(255,255,255,.28)}
+.shadow{position:absolute;left:50%;bottom:-6%;width:70%;height:34px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(var(--glow),.35),transparent);filter:blur(14px)}
+
+main{position:relative;z-index:5}
+.section{min-height:100vh;display:flex;align-items:center;padding:120px 9vw}
+.hero{min-height:130vh;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;
+-webkit-mask-image:radial-gradient(ellipse 80% 70% at 60% 40%,#000 30%,transparent 100%);mask-image:radial-gradient(ellipse 80% 70% at 60% 40%,#000 30%,transparent 100%)}
+.gridlines{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:72px 72px;animation:gridmove 12s linear infinite}
+@keyframes gridmove{to{background-position:0 72px,72px 0}}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:orb 14s ease-in-out infinite alternate}
+.o1{width:460px;height:460px;right:6%;top:8%;background:radial-gradient(circle,rgba(var(--glow),.7),transparent 70%)}
+.o2{width:380px;height:380px;left:-6%;bottom:14%;background:radial-gradient(circle,rgba(176,107,255,.45),transparent 70%);animation-delay:-6s}
+@keyframes orb{to{transform:translate(50px,-40px) scale(1.2)}}
+.badge{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 12px;margin-bottom:34px;border-radius:99px;font-size:11px;letter-spacing:1.5px;color:#cfd0da;
+border:1px solid var(--line);background:rgba(255,255,255,.04);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.badge i{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.6);animation:pulse 2s infinite}
+@keyframes pulse{to{box-shadow:0 0 0 10px rgba(74,222,128,0)}}
+.price-note{align-self:center;color:var(--mute);font-size:12px;letter-spacing:1px}
+.hero-stats{display:flex;gap:34px;margin-top:54px;padding-top:26px;border-top:1px solid var(--line)}
+.hero-stats strong{display:block;font:700 26px 'Space Grotesk',sans-serif;letter-spacing:-.02em}
+.hero-stats span{font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase}
+.chips{position:absolute;inset:0;pointer-events:none}
+.chip{position:absolute;transform:translate(var(--px,0),var(--py,0));transition:transform .5s var(--ease)}
+.chip div{display:flex;align-items:center;gap:12px;padding:12px 18px;border-radius:16px;border:1px solid var(--line);white-space:nowrap;
+background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.02));-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 20px 50px rgba(0,0,0,.4);animation:bob 6s ease-in-out infinite}
+.chip b{font:600 13px 'Space Grotesk',sans-serif;display:block}.chip small{font-size:10px;color:#777;letter-spacing:1px}
+.chip svg{width:20px;height:20px;flex:none}
+.c1{right:6vw;top:27%}.c2{right:30vw;top:66%}.c3{right:5vw;top:74%}
+.c2 div{animation-delay:-2s}.c3 div{animation-delay:-4s}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.marquee{position:absolute;left:0;bottom:0;width:100%;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;background:rgba(5,5,6,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.marquee div{display:flex;gap:0;width:max-content;animation:slide 28s linear infinite;font:500 12px 'Space Grotesk',sans-serif;letter-spacing:5px;color:#5d5d68}
+.marquee div span{margin-right:48px}
+.marquee div span::after{content:"";display:inline-block;width:5px;height:5px;margin-left:48px;vertical-align:middle;background:#3a3a44;transform:rotate(45deg)}
+@keyframes slide{to{transform:translateX(-50%)}}
+.split.right{justify-content:flex-end}
+.section-content,.content{width:min(480px,100%)}
+.eyebrow,.section-number{color:#6c6c76;font-size:11px;letter-spacing:4px;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.eyebrow::before,.section-number::before{content:"";width:28px;height:1px;background:#555}
+.title{font:700 clamp(64px,11vw,160px)/.8 'Space Grotesk',sans-serif;letter-spacing:-.06em;color:#fff}
+.title .line{display:block;overflow:hidden;padding:0 .04em .1em}
+.title .line span{display:block;animation:rise 1.5s var(--ease) both;background:linear-gradient(180deg,#fff 30%,#6d6d78);-webkit-background-clip:text;background-clip:text;color:transparent}
+.title .line:nth-child(2) span{animation-delay:.15s}
+@keyframes rise{from{transform:translateY(115%) skewY(6deg)}}
+.subtitle{margin-top:36px;max-width:400px;color:var(--mute);font-size:17px;line-height:1.7;font-weight:300}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+.btn{padding:15px 28px;border-radius:99px;font-size:12px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;font-weight:600;transition:.4s var(--ease)}
+.btn.solid{background:#fff;color:#000}.btn.solid:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(var(--glow),.35)}
+.btn.ghost{border:1px solid var(--line);color:#fff}.btn.ghost:hover{border-color:#fff}
+.scroll-hint{position:absolute;bottom:16vh;left:9vw;font-size:10px;letter-spacing:3px;color:#555;display:flex;align-items:center;gap:12px}
+.scroll-hint i{width:1px;height:46px;background:linear-gradient(#fff,transparent);animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+.section-title{font:700 clamp(42px,6vw,82px)/.94 'Space Grotesk',sans-serif;letter-spacing:-.05em;
+background:linear-gradient(180deg,#fff 40%,#7b7b86);-webkit-background-clip:text;background-clip:text;color:transparent}
+.section-text{color:var(--mute);font-size:16px;line-height:1.85;margin-top:28px;max-width:430px;font-weight:300}
+.feature-grid{margin-top:40px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.feature{position:relative;padding:24px;border-radius:18px;border:1px solid var(--line);overflow:hidden;
+background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.01));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);transition:.5s var(--ease)}
+.feature::after{content:"";position:absolute;inset:0;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.09),transparent 60%);opacity:0;transition:.4s}
+.feature:hover{transform:translateY(-6px);border-color:rgba(255,255,255,.22)}.feature:hover::after{opacity:1}
+.feature h3{font-size:15px;margin-bottom:10px;font-weight:600}
+.feature p{color:#7c7c86;font-size:12.5px;line-height:1.65}
+
+.battery{max-width:440px;margin-top:36px}
+.battery-top{display:flex;justify-content:space-between;margin-bottom:14px;color:var(--mute);font-size:12px}
+.battery-top b{color:#fff;font-weight:600}
+.battery-track{height:6px;border-radius:9px;background:#1b1b1f;overflow:hidden}
+.battery-fill{height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,#6b7cff,#fff);box-shadow:0 0 20px rgba(var(--glow),.6);transition:width 1.8s var(--ease)}
+
+.spec-section{justify-content:center}
+.spec-container{width:min(1000px,100%)}
+.spec-heading{text-align:center;margin-bottom:60px}
+.spec-heading .section-number{justify-content:center}
+.spec-heading h2{font:700 clamp(45px,7vw,90px)/.95 'Space Grotesk',sans-serif;letter-spacing:-.05em}
+.spec-heading p{color:#777;margin-top:18px}
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.spec{padding:38px 20px;background:#08080a;text-align:center;transition:.4s}.spec:hover{background:#0e0e12}
+.spec strong{display:block;font:700 36px 'Space Grotesk',sans-serif;margin-bottom:8px}
+.spec span{color:#666;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+
+.buy{min-height:150vh;justify-content:center;text-align:center}
+.buy-content{width:min(850px,100%);padding-top:10vh}
+.buy .eyebrow{justify-content:center}
+.buy-title{font:700 clamp(65px,10vw,150px)/.82 'Space Grotesk',sans-serif;letter-spacing:-.06em;
+background:linear-gradient(180deg,#fff 30%,#6d6d78);-webkit-background-clip:text;background-clip:text;color:transparent}
+.buy-description{color:#777;max-width:450px;margin:35px auto 50px;line-height:1.7;font-weight:300}
+.purchase-panel{width:min(560px,100%);margin:auto;padding:32px;border-radius:26px;text-align:left;border:1px solid var(--line);
+background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));-webkit-backdrop-filter:blur(26px);backdrop-filter:blur(26px);box-shadow:0 40px 100px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.08)}
+.purchase-row{display:flex;justify-content:space-between;align-items:center;padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+.product-name{font-size:18px;font-weight:600;letter-spacing:2px}
+.product-price{font:500 22px 'Space Grotesk',sans-serif}
+.option-label{color:#777;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.finish-options{display:flex;gap:10px;margin-bottom:26px}
+.finish{flex:1;padding:14px 10px;border-radius:14px;background:#0d0d10;border:1px solid #222;color:#777;cursor:pointer;font:inherit;font-size:13px;display:flex;align-items:center;justify-content:center;gap:9px;transition:.3s}
+.finish i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
+.finish:hover,.finish.active{color:#fff;border-color:#fff}
+.quantity{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.quantity .option-label{margin:0}
+.quantity-control{display:flex;align-items:center;border:1px solid #252525;border-radius:12px;overflow:hidden}
+.quantity-control button{width:42px;height:40px;border:0;background:#0d0d10;color:#fff;cursor:pointer;font-size:16px;transition:.2s}
+.quantity-control button:hover{background:#1a1a1f}
+.quantity-control span{width:42px;text-align:center;font-size:13px}
+.cart-button{width:100%;height:60px;border:0;border-radius:16px;background:#fff;color:#000;font:700 13px Inter,sans-serif;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:transform .3s,box-shadow .4s,background .3s}
+.cart-button:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(var(--glow),.35)}
+.cart-button.added{background:#15151a;color:#fff;box-shadow:inset 0 0 0 1px #3a3a44}
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.trust-item{color:#666;font-size:10.5px;text-align:center;letter-spacing:.5px}
+footer{min-height:30vh;display:flex;align-items:center;justify-content:center;color:#444;font-size:11px;letter-spacing:3px;position:relative;z-index:5}
+
+.reveal{opacity:0;transform:translateY(50px);filter:blur(8px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease),filter 1.1s var(--ease)}
+.reveal.visible{opacity:1;transform:none;filter:none}
+
+@media(max-width:900px){.product-wrapper{width:min(400px,54vw)}.section{padding:100px 7vw}.spec-grid{grid-template-columns:repeat(2,1fr)}.dots{display:none}}
+@media(max-width:600px){
+.navbar{height:60px;padding:0 20px}.progress{top:60px}.nav-link{display:none}
+.product-wrapper{width:min(330px,74vw)}.section{padding:90px 24px}.hero{min-height:125vh}
+.title{font-size:19vw}.chips{display:none}.hero-stats{gap:22px}.hero-stats strong{font-size:20px}.scroll-hint{display:none}.subtitle{font-size:14px;max-width:290px}.split.right{justify-content:flex-start}
+.section-title{font-size:46px}.feature-grid{grid-template-columns:1fr}.spec strong{font-size:26px}
+.buy-title{font-size:18vw}.purchase-panel{padding:22px}.trust{grid-template-columns:1fr;gap:8px}.scroll-hint{left:24px}.cursor{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* text animation */
+.split-t{background:none!important}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .06em .14em;margin:0 -.06em -.14em}
+.w>span{display:inline-block;transform:translateY(118%) rotate(5deg);transform-origin:left bottom;
+background:linear-gradient(180deg,#fff 40%,#7b7b86);-webkit-background-clip:text;background-clip:text;color:transparent;
+transition:transform 1.2s var(--ease) calc(var(--i)*80ms + 150ms)}
+.reveal.visible .w>span{transform:none}
+.reveal .section-number::before,.reveal .eyebrow::before{width:0;transition:width 1.1s var(--ease) .3s}
+.reveal.visible .section-number::before,.reveal.visible .eyebrow::before{width:28px}
+.reveal .section-text,.reveal .feature-grid,.reveal .battery,.reveal .buy-description,.reveal .subtitle,.reveal .hero-cta,.reveal .hero-stats,.reveal .badge{opacity:0;transform:translateY(26px);filter:blur(6px);transition:opacity 1s var(--ease),transform 1s var(--ease),filter 1s var(--ease)}
+.reveal.visible .section-text,.reveal.visible .buy-description,.reveal.visible .badge{opacity:1;transform:none;filter:none;transition-delay:.55s}
+.reveal.visible .subtitle{opacity:1;transform:none;filter:none;transition-delay:.7s}
+.reveal.visible .hero-cta{opacity:1;transform:none;filter:none;transition-delay:.85s}
+.reveal.visible .hero-stats{opacity:1;transform:none;filter:none;transition-delay:1s}
+.reveal.visible .feature-grid,.reveal.visible .battery{opacity:1;transform:none;filter:none;transition-delay:.8s}
+.reveal.visible .badge{transition-delay:.1s}
+.rotw{display:inline-block;overflow:hidden;vertical-align:bottom;height:1.45em;color:#fff}
+#rot{display:inline-block;transition:transform .6s var(--ease),opacity .6s}
+#rot.out{transform:translateY(-110%);opacity:0}
+#rot.pre{transform:translateY(110%);opacity:0;transition:none}
+
+/* cart & checkout */
+.cart-pill{cursor:pointer}
+.cart-button.alt{margin-top:10px;background:transparent;color:#fff;box-shadow:inset 0 0 0 1px #3a3a44}
+.cart-button.alt:hover{box-shadow:inset 0 0 0 1px #fff}
+.overlay{position:fixed;inset:0;z-index:1900;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .4s}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);z-index:2000;display:flex;flex-direction:column;background:#0a0a0d;border-left:1px solid var(--line);transform:translateX(105%);transition:transform .6s var(--ease)}
+.drawer.open{transform:none}
+.dr-head{display:flex;justify-content:space-between;align-items:center;padding:24px 26px;border-bottom:1px solid var(--line)}
+.dr-head h3{font:600 18px 'Space Grotesk',sans-serif;letter-spacing:1px}
+.x{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:#fff;font-size:20px;cursor:pointer;transition:.3s}.x:hover{background:#fff;color:#000}
+.dr-body{flex:1;overflow:auto;padding:6px 26px}
+.it{display:flex;gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.it-img{width:72px;height:92px;border-radius:14px;background:#111116;display:grid;place-items:center;flex:none;overflow:hidden}
+.it-img img{height:80px;width:auto;max-width:54px;object-fit:contain}
+.it-i{flex:1}.it-i b{font-size:14px;letter-spacing:1.5px}.it-i small{display:block;color:#777;font-size:12px;margin:4px 0 12px}
+.qc{display:inline-flex;align-items:center;border:1px solid #252525;border-radius:10px;overflow:hidden}
+.qc button{width:32px;height:30px;border:0;background:#0d0d10;color:#fff;cursor:pointer}.qc span{width:32px;text-align:center;font-size:12px}
+.it-p{font:500 15px 'Space Grotesk',sans-serif;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end}
+.rm{background:none;border:0;color:#666;font:inherit;font-size:11px;cursor:pointer;text-decoration:underline}.rm:hover{color:#fff}
+.empty{text-align:center;color:#777;padding:90px 0}.empty button{margin-top:24px;cursor:pointer;background:none;font-family:inherit}
+.dr-foot{padding:22px 26px 28px;border-top:1px solid var(--line)}
+.promo{display:flex;gap:8px}.promo input{height:44px}.promo button{padding:0 18px;border-radius:12px;border:1px solid #333;background:none;color:#fff;font:inherit;font-size:12px;cursor:pointer}
+#promoMsg{display:block;min-height:16px;margin-top:6px;font-size:11px;color:#8b8b95}
+.ln{display:flex;justify-content:space-between;color:#8b8b95;font-size:13px;margin-top:10px}
+.ln.t{color:#fff;font:600 19px 'Space Grotesk',sans-serif;margin:18px 0 20px}
+.modal{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .4s}
+.modal.open{opacity:1;pointer-events:auto}
+.co{position:relative;width:min(980px,100%);max-height:92vh;overflow:auto;display:grid;grid-template-columns:1.25fr .85fr;border-radius:26px;border:1px solid var(--line);background:#09090c;box-shadow:0 60px 140px rgba(0,0,0,.7);transform:translateY(30px) scale(.98);transition:transform .6s var(--ease)}
+.modal.open .co{transform:none}
+.co.done{grid-template-columns:1fr;max-width:540px}
+.co-main{padding:40px}.co-side{padding:40px;background:#0d0d11;border-left:1px solid var(--line)}
+.co-x{position:absolute;right:16px;top:16px;z-index:2}
+.steps{display:flex;gap:10px;margin-bottom:28px;font-size:11px;letter-spacing:2px;color:#555;text-transform:uppercase}.steps b{color:#fff;font-weight:600}
+.co h2{font:700 30px 'Space Grotesk',sans-serif;letter-spacing:-.03em}
+.sub{color:#777;font-size:13px;margin:8px 0 26px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-bottom:22px}.grid .full{grid-column:1/-1}
+.fld span{display:block;font-size:10px;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:8px}
+.co input,.co select{width:100%;height:48px;padding:0 14px;border-radius:12px;border:1px solid #232328;background:#0f0f13;color:#fff;font:inherit;font-size:14px;outline:none;transition:border-color .25s}
+.co input:focus,.co select:focus,.promo input:focus{border-color:#fff}
+.promo input{width:100%;padding:0 14px;border-radius:12px;border:1px solid #232328;background:#0f0f13;color:#fff;font:inherit;font-size:13px;outline:none}
+.fld em{display:block;min-height:16px;margin-top:5px;font-style:normal;font-size:11px;color:#ff6b6b}
+.fld.bad input{border-color:#ff6b6b}
+.tabs{display:flex;gap:10px;margin-bottom:22px}.tabs button{flex:1;height:46px;border-radius:12px;background:#0f0f13;border:1px solid #232328;color:#777;font:inherit;font-size:13px;cursor:pointer;transition:.25s}.tabs button.on{color:#fff;border-color:#fff}
+.note{font-size:11px;color:#777;line-height:1.7;margin:0 0 20px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.back{background:none;border:0;color:#777;font:inherit;font-size:12px;cursor:pointer;margin-bottom:18px}.back:hover{color:#fff}
+.co-side h4{font-size:11px;letter-spacing:2px;color:#777;text-transform:uppercase;margin-bottom:22px;font-weight:500}
+.sum-it{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#bbb;margin-bottom:14px}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #888;border-top-color:#000;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ok{text-align:center;padding:14px 0 6px}.ok svg{width:84px;height:84px;margin-bottom:22px}
+.ok circle,.ok path{stroke-dasharray:260;stroke-dashoffset:260;animation:draw 1s var(--ease) .2s forwards}.ok path{animation-delay:.7s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ok p{color:#8b8b95;font-size:14px;line-height:1.7;margin:10px 0 26px}.ok .oid{font:600 15px 'Space Grotesk',sans-serif;letter-spacing:3px;color:#fff}
+.toast{position:fixed;left:50%;bottom:30px;z-index:3000;padding:13px 22px;border-radius:99px;background:#fff;color:#000;font-size:12px;font-weight:600;letter-spacing:1px;transform:translate(-50%,120px);transition:transform .6s var(--ease)}.toast.show{transform:translate(-50%,0)}
+@media(max-width:800px){.co{grid-template-columns:1fr}.co-side{order:2;border-left:0;border-top:1px solid var(--line)}.co-main,.co-side{padding:28px 22px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="grain"></div><div class="aura" id="aura"></div><div class="cursor" id="cursor"></div>
+
+<nav class="navbar">
+  <div class="logo">NOVA</div>
+  <div class="nav-right">
+    <a href="#specs" class="nav-link">SPECS</a>
+    <a href="#buy" class="nav-link">BUY</a>
+    <div class="cart-pill" id="cartPill" role="button" tabindex="0" aria-label="Open bag">Bag · <span id="cartCount">0</span></div>
+  </div>
+</nav>
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+<div class="dots" id="dots"></div>
+
+<div class="product-stage">
+  <div class="product-wrapper" id="product">
+    <img src="assets/product.png" alt="Nova X1" class="product-image" id="productImg">
+    <div class="back"><i></i><b>NOVA</b></div>
+    <div class="shadow"></div>
+  </div>
+</div>
+
+<main>
+  <section class="section hero" id="hero">
+    <div class="hero-bg"><div class="orb o1"></div><div class="orb o2"></div><div class="gridlines"></div></div>
+    <div class="content reveal">
+      <div class="badge">NEW · NOW AVAILABLE</div>
+      <h1 class="title"><span class="line"><span>NOVA</span></span><span class="line"><span>X1</span></span></h1>
+      <p class="subtitle">A new generation of precision, performance and design. Built to feel <span class="rotw"><span id="rot">effortless</span></span>.</p>
+      <div class="hero-cta"><a href="#buy" class="btn solid">Buy now</a><a href="#design" class="btn ghost">Explore</a><span class="price-note">From $899</span></div>
+      <div class="hero-stats">
+        <div><strong data-count="48" data-suf="MP">0</strong><span>Camera</span></div>
+        <div><strong data-count="120" data-suf="Hz">0</strong><span>Display</span></div>
+        <div><strong data-count="2" data-suf=" days">0</strong><span>Battery</span></div>
+      </div>
+    </div>
+    <div class="chips" id="chips">
+      <div class="chip c1" data-d="26"><div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><rect x="3" y="6" width="18" height="14" rx="3"/></svg><span><b>48 MP Camera</b><small>PRO OPTICS</small></span></div></div>
+      <div class="chip c2" data-d="-18"><div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg><span><b>Ultra Bright</b><small>2000 NITS</small></span></div></div>
+      <div class="chip c3" data-d="34"><div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><span><b>Fast Charge</b><small>0–80% IN 30 MIN</small></span></div></div>
+    </div>
+    <div class="scroll-hint"><i></i>SCROLL</div>
+    <div class="marquee"><div>
+      <span>PRECISION</span><span>PERFORMANCE</span><span>DESIGN</span><span>EFFORTLESS</span><span>PRECISION</span><span>PERFORMANCE</span><span>DESIGN</span><span>EFFORTLESS</span>
+    </div></div>
+  </section>
+
+  <section class="section split" id="design">
+    <div class="section-content reveal">
+      <div class="section-number">02 / Design</div>
+      <h2 class="section-title">Designed<br>to disappear.</h2>
+      <p class="section-text">Every surface has been refined for a cleaner, more balanced silhouette. Minimal from a distance, detailed up close.</p>
+      <div class="feature-grid">
+        <div class="feature"><h3>Precision Body</h3><p>Carefully engineered proportions with refined edges.</p></div>
+        <div class="feature"><h3>Balanced Form</h3><p>Designed around natural movement and comfortable handling.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split right" id="camera">
+    <div class="section-content reveal">
+      <div class="section-number">03 / Camera</div>
+      <h2 class="section-title">Capture<br>the moment.</h2>
+      <p class="section-text">Advanced optics and intelligent processing work together to produce detail-rich images in changing conditions.</p>
+      <div class="feature-grid">
+        <div class="feature"><h3>48 MP</h3><p>High-resolution imaging system.</p></div>
+        <div class="feature"><h3>4K Video</h3><p>Smooth cinematic video recording.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split" id="display">
+    <div class="section-content reveal">
+      <div class="section-number">04 / Display</div>
+      <h2 class="section-title">Every detail<br>comes alive.</h2>
+      <p class="section-text">A high-contrast display delivers rich blacks, accurate highlights and smooth motion from every angle.</p>
+      <div class="feature-grid">
+        <div class="feature"><h3>120 Hz</h3><p>Fluid scrolling and responsive interaction.</p></div>
+        <div class="feature"><h3>Ultra Bright</h3><p>Designed to remain clear outdoors.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split right" id="battery">
+    <div class="section-content reveal">
+      <div class="section-number">05 / Battery</div>
+      <h2 class="section-title">Power that<br>keeps going.</h2>
+      <p class="section-text">Nova X1 is engineered to stay with you through long days, heavy usage and everything between.</p>
+      <div class="battery">
+        <div class="battery-top"><span>Battery capacity</span><b id="batteryNum">0%</b></div>
+        <div class="battery-track"><div class="battery-fill" id="batteryFill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section split" id="material">
+    <div class="section-content reveal">
+      <div class="section-number">06 / Materials</div>
+      <h2 class="section-title">Built with<br>intention.</h2>
+      <p class="section-text">Premium materials meet precise manufacturing to create a product that feels as considered as it looks.</p>
+      <div class="feature-grid">
+        <div class="feature"><h3>Aluminium</h3><p>Lightweight structural frame.</p></div>
+        <div class="feature"><h3>Glass</h3><p>Refined front surface with durable finish.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section spec-section" id="specs">
+    <div class="spec-container reveal">
+      <div class="spec-heading">
+        <div class="section-number">07 / Specifications</div>
+        <h2>Everything<br>in balance.</h2>
+        <p>Performance without unnecessary complexity.</p>
+      </div>
+      <div class="spec-grid">
+        <div class="spec"><strong data-count="6.7" data-dec="1" data-suf='"'>0</strong><span>Display</span></div>
+        <div class="spec"><strong data-count="120" data-suf="Hz">0</strong><span>Refresh</span></div>
+        <div class="spec"><strong data-count="48" data-suf="MP">0</strong><span>Camera</span></div>
+        <div class="spec"><strong data-count="512" data-suf="GB">0</strong><span>Storage</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section buy" id="buy">
+    <div class="buy-content reveal">
+      <div class="eyebrow">08 / Your Nova</div>
+      <h2 class="buy-title">Ready when<br>you are.</h2>
+      <p class="buy-description">Experience Nova X1 from every angle. Choose your finish and make it yours.</p>
+      <div class="purchase-panel">
+        <div class="purchase-row">
+          <div class="product-name">NOVA X1</div>
+          <div class="product-price" id="price">$899</div>
+        </div>
+        <div class="option-label">Choose finish</div>
+        <div class="finish-options">
+          <button class="finish active" data-f="obsidian" style="--c:#15151a"><i></i>Obsidian</button>
+          <button class="finish" data-f="silver" style="--c:#d6d6dc"><i></i>Silver</button>
+          <button class="finish" data-f="titanium" style="--c:#8f8677"><i></i>Titanium</button>
+        </div>
+        <div class="quantity">
+          <div class="option-label">Quantity</div>
+          <div class="quantity-control"><button id="minus" aria-label="Decrease quantity">−</button><span id="quantity">1</span><button id="plus" aria-label="Increase quantity">+</button></div>
+        </div>
+        <button class="cart-button" id="cartButton">Add to Cart</button>
+        <button class="cart-button alt" id="buyNow">Buy now</button>
+        <div class="trust"><div class="trust-item">Free shipping</div><div class="trust-item">30-day returns</div><div class="trust-item">2-year warranty</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>NOVA X1 — PRECISION WITHOUT COMPROMISE</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Shopping bag">
+  <div class="dr-head"><h3>YOUR BAG</h3><button class="x" data-a="close" aria-label="Close bag">&times;</button></div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="dr-foot" id="drFoot"></div>
+</aside>
+<div class="modal" id="checkout" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="co" id="coBox"><button class="x co-x" data-c="close" aria-label="Close checkout">&times;</button><div class="co-main" id="coMain"></div><div class="co-side" id="coSide"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const stage=document.querySelector('.product-stage'),product=$('product'),img=$('productImg'),bar=$('progressBar');
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+
+/* fallback product if assets/product.png is missing */
+const fallback='data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 620"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3a44"/><stop offset=".5" stop-color="#15151a"/><stop offset="1" stop-color="#2b2b33"/></linearGradient><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a6cff" stop-opacity=".9"/><stop offset="1" stop-color="#b06bff" stop-opacity=".5"/></linearGradient></defs><rect x="8" y="8" width="284" height="604" rx="52" fill="url(#b)" stroke="#555" stroke-width="3"/><rect x="20" y="20" width="260" height="580" rx="42" fill="#050507"/><rect x="28" y="28" width="244" height="564" rx="36" fill="url(#s)"/><rect x="110" y="42" width="80" height="22" rx="11" fill="#050507"/></svg>`);
+img.onerror=()=>{img.onerror=null;img.src=fallback};
+if(img.complete&&img.naturalWidth===0)img.onerror();
+
+/* scroll stops: [id, side, y(vh), scale, rotateY, rotateX, mobile opacity] */
+const stops=[
+ ['hero','R',.02,.86,-16,6,.5],['design','R',0,.74,-26,5,.28],['camera','L',.01,.78,28,-4,.28],
+ ['display','R',-.01,.75,-26,6,.28],['battery','L',.01,.74,26,-3,.28],['material','R',0,.7,-24,5,.28],
+ ['specs','C',-.03,.62,0,0,.25],['buy','C',-.07,.48,0,3,.55]
+];
+/* set to true to bring back the product rotation while scrolling */
+const ROTATE_ON_SCROLL=false;
+let centers=[],xs=[],K=1,cur={x:0,y:0,s:1,r:0,rx:0,o:1,z:0},tgt={x:0,y:0,s:1,r:0,rx:0,o:1,z:0},mouse={x:0,y:0},lastY=0,vel=0,rawVel=0;
+function measure(){
+  const vw=innerWidth;K=clamp(innerHeight/820,.65,1.3);
+  centers=stops.map(s=>{const e=$(s[0]);return e.offsetTop+e.offsetHeight/2});
+  /* product sits in the exact middle of the free space beside the text */
+  xs=stops.map(s=>{
+    if(s[1]==='C'||vw<=700)return 0;
+    const c=$(s[0]).querySelector('.section-content,.content'),l=c.offsetLeft,r=l+c.offsetWidth;
+    return clamp((s[1]==='R'?(r+vw)/2:l/2)-vw/2,-vw*.32,vw*.32);
+  });
+}
+function update(){
+  const vh=innerHeight,vw=innerWidth,y=scrollY+vh/2,mob=vw<=700;
+  let i=0;while(i<centers.length-2&&y>centers[i+1])i++;
+  const t=ease(clamp((y-centers[i])/(centers[i+1]-centers[i]),0,1)),a=stops[i],b=stops[i+1];
+  tgt.x=lerp(xs[i],xs[i+1],t);tgt.y=lerp(a[2],b[2],t)*vh;
+  tgt.s=lerp(a[3],b[3],t)*K*(mob?.85:1);tgt.r=lerp(a[4],b[4],t);tgt.rx=lerp(a[5],b[5],t);
+  tgt.o=mob?lerp(a[6],b[6],t):1;
+  /* extra swing + lean while the phone travels from one side to the other */
+  const swing=Math.sin(Math.PI*t),dir=Math.sign(xs[i+1]-xs[i])||1;
+  tgt.r+=360*(i+t);tgt.z=-dir*swing*7;tgt.rx+=swing*4;
+  rawVel+=scrollY-lastY;lastY=scrollY;
+  if(!ROTATE_ON_SCROLL){tgt.r=0;tgt.rx=0;tgt.z=0}
+  const max=document.documentElement.scrollHeight-vh;
+  bar.style.width=(scrollY/Math.max(max,1))*100+'%';
+  dotEls.forEach((d,k)=>d.classList.toggle('on',k===Math.round(i+t)));
+  $('aura').style.setProperty('--ax',(50+tgt.x/vw*100)+'%');
+}
+function loop(){
+  for(const p in cur)cur[p]+=(tgt[p]-cur[p])*.07;
+  vel+=(rawVel-vel)*.12;rawVel*=.82;
+  const vt=ROTATE_ON_SCROLL?clamp(vel,-60,60):0;
+  const T=performance.now()*.001,fy=Math.sin(T*1.2)*4,fr=Math.sin(T*.8)*.8;
+  product.style.transform=`translate3d(calc(-50% + ${cur.x+mouse.x*-14}px),calc(-50% + ${cur.y+fy+mouse.y*-10}px),0) rotateY(${cur.r+fr+mouse.x*8+vt*.25}deg) rotateX(${cur.rx-mouse.y*6-vt*.22}deg) rotateZ(${cur.z+vt*.06}deg) scale(${cur.s})`;
+  stage.style.opacity=cur.o;
+  requestAnimationFrame(loop);
+}
+
+/* word-by-word title animation */
+function splitWords(el){
+  let i=0;const out=[];
+  el.childNodes.forEach(n=>{
+    if(n.nodeType===3)n.textContent.split(/(\s+)/).forEach(w=>{if(!w.trim()){if(w)out.push(' ');return}out.push(`<span class="w"><span style="--i:${i++}">${w}</span></span>`)});
+    else if(n.nodeName==='BR')out.push('<br>');
+  });
+  el.innerHTML=out.join('');el.classList.add('split-t');
+}
+document.querySelectorAll('.section-title,.buy-title,.spec-heading h2').forEach(splitWords);
+
+/* rotating hero word */
+const words=['effortless','powerful','precise','beautiful'],rot=$('rot');let wi=0;
+setInterval(()=>{rot.classList.add('out');setTimeout(()=>{wi=(wi+1)%words.length;rot.textContent=words[wi];rot.classList.add('pre');rot.classList.remove('out');void rot.offsetWidth;rot.classList.remove('pre')},600)},2600);
+
+/* dots */
+const dotsWrap=$('dots');
+stops.forEach(s=>{const a=document.createElement('a');a.href='#'+s[0];a.setAttribute('aria-label','Go to '+s[0]);dotsWrap.appendChild(a)});
+const dotEls=[...dotsWrap.children];
+
+/* reveal + counters + battery */
+function countUp(el){
+  const end=+el.dataset.count,dec=+(el.dataset.dec||0),suf=el.dataset.suf||'',t0=performance.now();
+  (function f(n){const p=clamp((n-t0)/1600,0,1),v=end*(1-Math.pow(1-p,4));el.textContent=v.toFixed(dec)+suf;if(p<1)requestAnimationFrame(f)})(t0);
+}
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  e.target.classList.add('visible');
+  e.target.querySelectorAll('[data-count]').forEach(c=>{if(!c.done){c.done=1;countUp(c)}});
+  if(e.target.closest('#battery')&&!$('batteryFill').done){
+    $('batteryFill').done=1;$('batteryFill').style.width='92%';
+    const t0=performance.now();(function f(n){const p=clamp((n-t0)/1800,0,1);$('batteryNum').textContent=Math.round(92*p)+'%';if(p<1)requestAnimationFrame(f)})(t0);
+  }
+}),{threshold:.2});
+document.querySelectorAll('[data-count]').forEach(c=>{c.textContent=(0).toFixed(+(c.dataset.dec||0))+(c.dataset.suf||'')});
+document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+
+/* pointer effects */
+const cursor=$('cursor'),chipEls=[...document.querySelectorAll('.chip')];
+addEventListener('pointermove',e=>{
+  cursor.style.transform=`translate(${e.clientX-210}px,${e.clientY-210}px)`;
+  mouse.x=e.clientX/innerWidth-.5;mouse.y=e.clientY/innerHeight-.5;
+  chipEls.forEach(c=>{const d=+c.dataset.d;c.style.setProperty('--px',mouse.x*d+'px');c.style.setProperty('--py',mouse.y*d+'px')});
+});
+document.querySelectorAll('.feature').forEach(f=>f.addEventListener('pointermove',e=>{
+  const r=f.getBoundingClientRect();f.style.setProperty('--mx',e.clientX-r.left+'px');f.style.setProperty('--my',e.clientY-r.top+'px');
+}));
+
+/* purchase */
+const PRICE=899;let qty=1,finish='obsidian';
+const looks={obsidian:{f:'none',g:'120,140,255'},silver:{f:'grayscale(1) brightness(1.7) contrast(.9)',g:'200,205,225'},titanium:{f:'sepia(.55) saturate(.7) brightness(1.25)',g:'190,160,110'}};
+const fmt=n=>'$'+n.toLocaleString('en-US');
+function refresh(){$('quantity').textContent=qty;$('price').textContent=fmt(PRICE*qty)}
+document.querySelectorAll('.finish').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.finish').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  finish=b.dataset.f;const L=looks[finish];
+  img.style.filter=`${L.f==='none'?'':L.f+' '}drop-shadow(0 50px 80px rgba(0,0,0,.65)) drop-shadow(0 0 60px rgba(${L.g},.2))`;
+  document.documentElement.style.setProperty('--glow',L.g);
+});
+$('minus').onclick=()=>{qty=Math.max(1,qty-1);refresh()};
+$('plus').onclick=()=>{qty=Math.min(10,qty+1);refresh()};
+/* ===== CART + CHECKOUT ===== */
+const FIN={obsidian:'#15151a',silver:'#d6d6dc',titanium:'#8f8677'};
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cap=t=>t[0].toUpperCase()+t.slice(1);
+let cart=[];try{cart=JSON.parse(localStorage.getItem('nova_cart'))||[]}catch(e){}
+let promo=0,step=1,pay='card',errs={},vals={'f-country':'Bangladesh'},busy=false,order=null,cartT,toastT;
+const save=()=>{try{localStorage.setItem('nova_cart',JSON.stringify(cart))}catch(e){}};
+const count=()=>cart.reduce((a,i)=>a+i.q,0),sub=()=>count()*PRICE,disc=()=>Math.round(sub()*promo),total=()=>sub()-disc();
+const ov=$('overlay'),dr=$('drawer'),co=$('checkout'),coBox=$('coBox');
+const setCount=()=>{$('cartCount').textContent=count()};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200)}
+function lock(){const o=dr.classList.contains('open')||co.classList.contains('open');document.documentElement.style.overflow=o?'hidden':'';ov.classList.toggle('open',o)}
+function closeAll(){if(busy)return;dr.classList.remove('open');co.classList.remove('open');dr.setAttribute('aria-hidden','true');co.setAttribute('aria-hidden','true');lock()}
+function openDrawer(){renderDrawer();dr.classList.add('open');dr.setAttribute('aria-hidden','false');lock()}
+function addToCart(){
+  const it=cart.find(i=>i.f===finish);if(it)it.q=Math.min(10,it.q+qty);else cart.push({f:finish,q:qty});
+  save();setCount();$('cartPill').classList.add('bump');setTimeout(()=>$('cartPill').classList.remove('bump'),300);
+}
+
+/* drawer */
+function renderDrawer(){
+  setCount();
+  if(!cart.length){$('drBody').innerHTML='<div class="empty"><p>Your bag is empty.</p><button class="btn ghost" data-a="close">Keep exploring</button></div>';$('drFoot').innerHTML='';return}
+  $('drBody').innerHTML=cart.map(i=>`<div class="it"><div class="it-img"><img src="${img.src}" alt="" style="filter:${looks[i.f].f}"></div>
+    <div class="it-i"><b>NOVA X1</b><small>${cap(i.f)} &middot; 512GB</small><div class="qc"><button data-a="dec" data-f="${i.f}" aria-label="Decrease">&minus;</button><span>${i.q}</span><button data-a="inc" data-f="${i.f}" aria-label="Increase">+</button></div></div>
+    <div class="it-p"><span>${fmt(i.q*PRICE)}</span><button class="rm" data-a="rm" data-f="${i.f}">Remove</button></div></div>`).join('');
+  $('drFoot').innerHTML=`<div class="promo"><input id="promoIn" placeholder="Promo code (try NOVA10)" value="${promo?'NOVA10':''}" aria-label="Promo code"><button data-a="promo">Apply</button></div><small id="promoMsg"></small>
+    <div class="ln"><span>Subtotal</span><span>${fmt(sub())}</span></div>${promo?`<div class="ln"><span>Discount</span><span>-${fmt(disc())}</span></div>`:''}
+    <div class="ln"><span>Shipping</span><span>Free</span></div><div class="ln t"><span>Total</span><span>${fmt(total())}</span></div>
+    <button class="cart-button" data-a="checkout">Checkout</button>`;
+}
+dr.addEventListener('click',e=>{
+  const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,it=cart.find(i=>i.f===t.dataset.f);
+  if(a==='close'){closeAll();return}
+  if(a==='checkout'){openCo();return}
+  if(a==='promo'){const v=$('promoIn').value.trim().toUpperCase();promo=v==='NOVA10'?.1:0;renderDrawer();$('promoMsg').textContent=v?(promo?'Code applied: 10% off':'That code is not valid'):'';return}
+  if(a==='inc'&&it)it.q=Math.min(10,it.q+1);
+  if(a==='dec'&&it)it.q=Math.max(1,it.q-1);
+  if(a==='rm')cart=cart.filter(i=>i.f!==t.dataset.f);
+  save();renderDrawer();
+});
+
+/* validation */
+const luhn=n=>{let s=0,d=false;for(let i=n.length-1;i>=0;i--){let x=+n[i];if(d){x*=2;if(x>9)x-=9}s+=x;d=!d}return s%10===0};
+const has=k=>(vals[k]||'').trim();
+function vShip(){errs={};
+  if(!has('f-name'))errs['f-name']='Enter your full name';
+  if(!/^\S+@\S+\.\S+$/.test(has('f-email')))errs['f-email']='Enter a valid email';
+  if(has('f-phone').replace(/\D/g,'').length<7)errs['f-phone']='Enter a valid phone number';
+  if(!has('f-addr'))errs['f-addr']='Enter your address';
+  if(!has('f-city'))errs['f-city']='Enter your city';
+  if(!has('f-zip'))errs['f-zip']='Enter postal code';
+  return !Object.keys(errs).length}
+function vCard(){errs={};const n=has('c-num').replace(/\s/g,''),m=has('c-exp').match(/^(\d\d)\/(\d\d)$/);
+  if(!has('c-name'))errs['c-name']='Enter the name on card';
+  if(n.length<13||!luhn(n))errs['c-num']='Invalid card number';
+  if(!m||+m[1]<1||+m[1]>12||new Date(2000+ +m[2],+m[1])<new Date())errs['c-exp']='Invalid expiry';
+  if(!/^\d{3,4}$/.test(has('c-cvc')))errs['c-cvc']='Invalid CVC';
+  return !Object.keys(errs).length}
+
+/* checkout */
+const fld=(id,label,ph,type='text',cls='')=>`<label class="fld ${cls} ${errs[id]?'bad':''}"><span>${label}</span><input id="${id}" type="${type}" placeholder="${ph}" value="${esc(vals[id]||'')}" autocomplete="off"><em>${errs[id]||''}</em></label>`;
+const grab=()=>document.querySelectorAll('#coMain input,#coMain select').forEach(i=>vals[i.id]=i.value);
+function summary(){return `<h4>Order summary</h4>`+cart.map(i=>`<div class="sum-it"><span>NOVA X1 &middot; ${cap(i.f)} &times; ${i.q}</span><span>${fmt(i.q*PRICE)}</span></div>`).join('')
+  +(promo?`<div class="sum-it"><span>Promo NOVA10</span><span>-${fmt(disc())}</span></div>`:'')+`<div class="sum-it"><span>Shipping</span><span>Free</span></div><div class="ln t"><span>Total</span><span>${fmt(total())}</span></div>`}
+function openCo(){if(!cart.length)return;dr.classList.remove('open');step=1;errs={};renderCo();co.classList.add('open');co.setAttribute('aria-hidden','false');lock()}
+function renderCo(){
+  coBox.classList.toggle('done',step===3);
+  const bar=['Shipping','Payment','Done'].map((n,i)=>i+1===step?`<b>${n}</b>`:`<span>${n}</span>`).join('<span>/</span>');
+  let h='';
+  if(step===1){
+    const cs=['Bangladesh','India','United States','United Kingdom','Canada','Australia','Other'].map(c=>`<option ${vals['f-country']===c?'selected':''}>${c}</option>`).join('');
+    h=`<div class="steps">${bar}</div><h2>Shipping</h2><p class="sub">Where should we send your Nova?</p><div class="grid">
+      ${fld('f-name','Full name','Your name','text','full')}${fld('f-email','Email','you@email.com','email')}${fld('f-phone','Phone','+880 1XXX XXXXXX','tel')}
+      ${fld('f-addr','Address','House, road, area','text','full')}${fld('f-city','City','Dhaka')}${fld('f-zip','Postal code','1212')}
+      <label class="fld full"><span>Country</span><select id="f-country">${cs}</select></label></div>
+      <button class="cart-button" data-c="next">Continue to payment</button>`;
+  }else if(step===2){
+    const card=pay==='card'?`<div class="grid">${fld('c-name','Name on card','As printed on card','text','full')}${fld('c-num','Card number','4242 4242 4242 4242','text','full')}${fld('c-exp','Expiry','MM/YY')}${fld('c-cvc','CVC','123')}</div>`
+      :`<p class="note">Pay in cash when your order arrives. Our team may call to confirm your address before dispatch.</p>`;
+    h=`<div class="steps">${bar}</div><button class="back" data-c="back">&larr; Back to shipping</button><h2>Payment</h2><p class="sub">Choose how you would like to pay.</p>
+      <div class="tabs"><button data-c="tab" data-p="card" class="${pay==='card'?'on':''}">Card</button><button data-c="tab" data-p="cod" class="${pay==='cod'?'on':''}">Cash on delivery</button></div>${card}
+      <p class="note">Demo checkout: no real payment is processed and no card data is stored or sent anywhere. Test card 4242 4242 4242 4242, any future expiry, any CVC.</p>
+      <button class="cart-button" data-c="pay" ${busy?'disabled':''}>${busy?'<span class="spin"></span>Processing':(pay==='card'?'Pay '+fmt(total()):'Place order')}</button>`;
+  }else{
+    h=`<div class="ok"><svg viewBox="0 0 84 84" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="42" cy="42" r="38"/><path d="M26 43l11 11 21-23"/></svg>
+      <h2>Order confirmed</h2><p>Thank you, ${esc(order.name)}. A confirmation will be sent to ${esc(order.email)}.<br>${order.pay==='cod'?'Please keep '+fmt(order.total)+' ready on delivery.':'Paid '+fmt(order.total)+' by card.'}</p>
+      <div class="oid">${order.id}</div><br><button class="cart-button" data-c="done">Continue shopping</button></div>`;
+  }
+  $('coMain').innerHTML=h;$('coSide').innerHTML=step===3?'':summary();$('coSide').style.display=step===3?'none':'';
+}
+function processPay(){
+  busy=true;renderCo();
+  setTimeout(()=>{
+    order={id:'NX-'+Math.random().toString(36).slice(2,8).toUpperCase(),name:has('f-name'),email:has('f-email'),pay,total:total()};
+    cart=[];promo=0;save();setCount();['c-name','c-num','c-exp','c-cvc'].forEach(k=>delete vals[k]);
+    busy=false;step=3;renderCo();
+  },1900);
+}
+co.addEventListener('click',e=>{
+  if(e.target===co&&!busy){closeAll();return}
+  const t=e.target.closest('[data-c]');if(!t||busy)return;const c=t.dataset.c;
+  if(c==='close'||c==='done'){closeAll();return}
+  grab();
+  if(c==='next'){if(vShip())step=2}
+  else if(c==='back'){step=1;errs={}}
+  else if(c==='tab'){pay=t.dataset.p;errs={}}
+  else if(c==='pay'){if(pay==='card'&&!vCard()){renderCo();return}errs={};processPay();return}
+  renderCo();
+});
+co.addEventListener('input',e=>{const t=e.target;
+  if(t.id==='c-num')t.value=t.value.replace(/\D/g,'').slice(0,19).replace(/(.{4})/g,'$1 ').trim();
+  if(t.id==='c-exp'){const d=t.value.replace(/\D/g,'').slice(0,4);t.value=d.length>2?d.slice(0,2)+'/'+d.slice(2):d}
+  if(t.id==='c-cvc')t.value=t.value.replace(/\D/g,'').slice(0,4);
+  const f=t.closest('.fld');if(f)f.classList.remove('bad')});
+co.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){const b=coBox.querySelector('[data-c=next],[data-c=pay]');if(b)b.click()}});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+ov.addEventListener('click',closeAll);
+$('cartPill').addEventListener('click',openDrawer);
+$('cartPill').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer()}});
+$('cartButton').onclick=e=>{
+  const b=e.currentTarget;addToCart();toast('Added to your bag');
+  b.classList.add('added');b.textContent='Added to Cart';
+  clearTimeout(cartT);cartT=setTimeout(()=>{b.classList.remove('added');b.textContent='Add to Cart'},2000);
+  setTimeout(openDrawer,450);
+};
+$('buyNow').onclick=()=>{addToCart();openCo()};
+setCount();
+
+addEventListener('scroll',update,{passive:true});
+let rz;addEventListener('resize',()=>{cancelAnimationFrame(rz);rz=requestAnimationFrame(()=>{measure();update()})});
+addEventListener('load',()=>{measure();update()});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{measure();update()});
+measure();update();
+Object.assign(cur,tgt);
+loop();
+</script>
+</body>
+</html>
